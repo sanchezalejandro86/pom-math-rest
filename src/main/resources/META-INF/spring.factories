@@ -1,0 +1,4 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  ar.com.bancogalicia.common.logging.utils.GaliciaLoggerFactory,\
+  ar.com.bancogalicia.common.tracing.TracingInterceptor,\
+  ar.com.bancogalicia.po.common.filter.config.FilterConfiguration

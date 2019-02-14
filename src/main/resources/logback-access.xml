@@ -1,0 +1,7 @@
+<configuration debug="false" scan="false">
+
+    <springProperty scope="context" name="microservice" source="camel.springboot.name"/>
+
+    <include resource="ar/com/bancogalicia/common/logging/logback-access.xml" />
+
+</configuration>

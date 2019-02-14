@@ -1,0 +1,37 @@
+version: '3'
+
+services:
+  springboot-fuse-app:
+    container_name: pom-math-rest
+    build: .
+    network_mode: "host"
+    depends_on:
+      - mongodb
+      - amq
+    ports:
+      - 8080:8080
+  mongodb:
+    image: 'registry.access.redhat.com/rhscl/mongodb-32-rhel7:latest'
+    container_name: 'mongodb-fuse'
+    restart: 'always'
+    network_mode: 'host'
+    ports:
+      - 27017:27017
+    environment:
+      MONGODB_ADMIN_PASSWORD: admin
+      MONGODB_USER: galicia
+      MONGODB_PASSWORD: canales
+      MONGODB_DATABASE: galicia-canales
+  amq:
+    image: 'registry.access.redhat.com/jboss-amq-6/amq63-openshift:latest'
+    container_name: 'amq-broker'
+    environment:
+      MQ_USERNAME: testusr
+      MQ_PASSWORD: testpwd
+      MQ_QUEUES: reviews
+    network_mode: 'host'
+    ports:
+      - 5672:5672
+      - 1883:1883
+      - 61613:61613
+      - 61616:61616

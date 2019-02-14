@@ -1,0 +1,180 @@
+---
+swagger: "2.0"
+info:
+  title: pom-math-rest
+  description: Math REST endpoints
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+  version: 1.0.0
+consumes:
+- application/json
+produces:
+- application/json
+paths:
+  /add:
+    get:
+      summary: Listar todas las operaciones de suma computadas.
+      description: Retorna la lista de todas las operaciones ADD ya computadas.
+      responses:
+        200:
+          description: Resultado exitoso con la lista de sumas computadas.
+          schema:
+            $ref: '#/definitions/operation_result'
+    post:
+      summary: Suma los operandos
+      description: Ejecuta la suma de los dos operandos
+      parameters:
+      - name: body
+        in: body
+        description: Los dos operandos a sumar
+        required: true
+        schema:
+          $ref: '#/definitions/operands'
+      responses:
+        201:
+          description: Se creó la operacion ADD para procesar.
+          schema:
+            $ref: '#/definitions/add_response'
+          examples: {}
+definitions:
+  response:
+    description: Generic response
+    required:
+    - meta
+    - data
+    - errors
+    type: object
+    properties:
+      meta: {}
+      data:
+        type: array
+        items:
+          $ref: '#/definitions/operation_result'
+      errors:
+        type: array
+        items:
+          $ref: '#/definitions/error'
+    example: |-
+      {
+          "meta": {},
+          "data": [],
+          "errors": []
+      }
+  meta:
+    title: Root Type for meta
+    description: Commons metadata for all responses
+    required:
+    - method
+    - operation
+    type: object
+    properties:
+      method:
+        type: string
+      operation:
+        type: string
+      paging:
+        type: object
+    example: |-
+      {
+          "method": "GET",
+          "operation": "/v1/pom/math",
+          "paging": {}
+      }
+  operands:
+    title: Root Type for Operands
+    description: Operandos para computar la Operacion
+    required:
+    - op1
+    - op2
+    type: object
+    properties:
+      op1:
+        description: Primer Operando
+        type: number
+      op2:
+        description: Segundo Operando
+        type: number
+    example: |-
+      {
+          "op1": 1,
+          "op2": 2
+      }
+  error:
+    title: Root Type for error
+    description: The root of the error type's schema.
+    required:
+    - code
+    - detail
+    type: object
+    properties:
+      code:
+        type: string
+      detail:
+        type: string
+    example: |-
+      {
+          "code": "ERR-111",
+          "detail": "Invalid attribute 'event_source'"
+      }
+  result:
+    title: Root Type for result
+    description: The root of the data type's schema.
+    type: object
+    properties:
+      operation_id:
+        format: int32
+        type: integer
+    example: |-
+      {
+          "operation_id": 2132131
+      }
+  operation_result:
+    description: Operation result
+    required:
+    - operation_id
+    - operand1
+    - operand2
+    - operator
+    - result
+    type: object
+    properties:
+      operation_id:
+        type: integer
+      operand1:
+        type: number
+      operand2:
+        type: number
+      operator:
+        enum:
+        - ADD
+        - SUB
+        - MUL
+        - DIV
+      result:
+        type: number
+    example: |-
+      {
+          "operation_id": 123,
+          "operator": "ADD",
+          "operand1": 5,
+          "operand2": 6,
+          "result": 11
+      }
+  add_response:
+    required:
+    - meta
+    - data
+    - errors
+    type: object
+    properties:
+      meta:
+        $ref: '#/definitions/meta'
+      data:
+        type: array
+        items:
+          $ref: '#/definitions/result'
+      errors:
+        type: array
+        items:
+          $ref: '#/definitions/error'
