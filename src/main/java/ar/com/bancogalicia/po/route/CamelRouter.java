@@ -13,6 +13,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jackson.JacksonDataFormat;
 import org.apache.camel.component.jackson.ListJacksonDataFormat;
 import org.apache.camel.component.mongodb3.MongoDbConstants;
+import org.apache.camel.model.dataformat.JsonLibrary;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.bson.Document;
 import org.springframework.stereotype.Component;
@@ -75,13 +76,15 @@ public class CamelRouter extends RouteBuilder {
                     o.setOperator(OperationResult.OperatorEnum.ADD);
                     exchange.getIn().setBody(o);
                 })
-                .marshal().json()
+                .marshal().json(JsonLibrary.Jackson)
                 .log("BODY: ${body}")
                 .to(ExchangePattern.InOnly, "activemq:queue:math/calculate")
                 .bean("responseService", "getAddResponse")
         ;
 
         from("activemq:queue:math/operations")
+                .log("operacion de la cola: ${body}")
+                .unmarshal().json(JsonLibrary.Jackson, Document.class)
                 .to("mongodb3:mongo?database=math" +
                         "&collection=results" +
                         "&operation=insert")
